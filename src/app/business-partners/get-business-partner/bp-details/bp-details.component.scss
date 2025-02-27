@@ -1,0 +1,47 @@
+
+.details {
+    margin-left: 50px;
+}
+
+.label-spacing {
+    margin-right: 30px;
+}
+
+.error-text {
+    color: #e55353;
+}
+
+
+
+.autoComplete-countries {
+    display: block;
+}
+
+
+
+button svg {
+    vertical-align: middle; 
+    margin-bottom: 5px;
+}
+.delete{
+    background-color: #bf6161;
+}
+
+.save{
+    background-color: #e6b931;
+}
+
+.cancel{
+    background-color: #d6d6d6;
+}
+
+select:disabled , input:disabled{
+
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    color: #4b5563;
+    opacity: 0.6;
+
+}
+
+

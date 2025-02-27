@@ -1,0 +1,87 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+
+<p-table   [columns]="selectedColumns" [value]="contractPage.content"
+  [paginator]="true" [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '50rem' , 'font-size' : 'small'}"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  [rowsPerPageOptions]="[1, 2, 3, 5, 10]" [rows]="pageSize" [totalRecords]="contractPage.totalElements"
+  (onLazyLoad)="onPageChange($event)" [lazy]="true" [loading]="loading" (sortFunction)="onPageChange($event)"
+  [customSort]="true" [(selection)]="selectedContracts" class="TableStyle" (onRowSelect)="onRowSelect($event)" (onRowUnselect)="onRowUnselect($event)">
+
+  <ng-template pTemplate="caption">
+    <div class="row align-items-center">
+      <div class="col">
+        <p-multiSelect [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+          selectedItemsLabel="{0} columns selected" [style]="{ 'min-width': '200px'}"
+          placeholder="Choose Columns"></p-multiSelect>
+      </div>
+      <div class="col-auto">
+        <button pButton label="Export" class="p-button-outlined" icon="pi pi-upload"
+        (click)="exportToExcel()"></button>
+      </div>
+      <div class="col-auto">
+        <div class="input-group">
+          <span class="p-input-icon-left ml-auto" id="Tenant">
+            <i class="pi pi-search"></i>
+            <p-autoComplete [(ngModel)]="selectedTenant" [suggestions]="tenantSuggestions"
+              [inputStyle]="{ width: '140px' , 'font-size': 'small' , 'padding' : '5px' }"  (completeMethod)="filterTenants($event)" (onSelect)="searchWithFilters()"
+              (keydown.enter)="searchWithFilters()"  placeholder="Search By tenant"></p-autoComplete>
+          </span>
+        </div>
+      </div>
+      
+      <div class="col-auto ml-auto">
+        <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash"
+          (click)="clearFilters()"></button>
+      </div>
+      <div class="col-auto ml-auto" *ngIf="userIsAdmin">
+        <button pButton label="Add" class="p-button-outlined" icon="pi pi-plus"
+          routerLink="/contracts/add" ></button>
+      </div>
+      <div class="col-auto">
+        <button pButton label="Refresh" class="p-button-outlined" icon="pi pi-refresh" (click)="search()"
+          style="font-size: smaller;"></button>
+      </div>
+      <div class="col-auto ml-auto" *ngIf="selectedContracts && selectedContracts.length!=0 && userIsAdmin">
+        <p-button  label="Delete" [outlined]="true" severity="danger" (click)="delete($event)"></p-button>
+      </div>
+    </div>
+
+
+    <div class="col-auto" id="dropdownGroup">
+      <p-splitButton label="Actions" icon="pi pi-bars" [model]="items"></p-splitButton>
+    </div>
+
+  </ng-template>
+
+
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th style="width: 4rem" *ngIf="userIsAdmin">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+    </th>
+      <ng-container *ngFor="let col of columns">
+        
+        <th *ngIf="col.field != 'consumerName' && col.field != 'supplierName' " pSortableColumn="{{col.field }}">
+          {{col.header}}
+          <p-sortIcon field="{{col.field}}"></p-sortIcon>
+        </th>
+        <th *ngIf="col.field == 'consumerName' || col.field == 'supplierName'">
+          {{col.header}}
+        </th>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-contract let-columns="columns">
+    <tr [pSelectableRow]="contract" >
+      <td *ngIf="userIsAdmin">
+        <p-tableCheckbox [value]="contract"></p-tableCheckbox>
+    </td>
+      <td *ngFor="let col of columns" routerLink="/contracts/{{contract.id}}" class="selectable-cell">
+        {{contract[col.field]}}
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+

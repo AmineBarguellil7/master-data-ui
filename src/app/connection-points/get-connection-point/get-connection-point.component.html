@@ -1,0 +1,39 @@
+<p-toast></p-toast>
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<p-confirmDialog></p-confirmDialog>
+<ng-container>
+<c-col xs="12" style="margin-bottom: 20px;" *ngIf="updateMode">
+    <c-nav variant="tabs">
+        <c-nav-item >
+            <a cNavLink [disabled]="isDetails" (click)="toDetails()" >
+                Connection Point
+            </a>
+        </c-nav-item>
+        <c-nav-item>
+            <a [disabled]="isServices" cNavLink (click)="toServices()">
+                Services
+            </a>
+        </c-nav-item>
+        <c-nav-item>
+
+
+            <a [disabled]="isConnectivity" cNavLink (click)="toConnectivity()" *ngIf=" (connectionPoint.type=='FACILITY'&& !withSensorApiKey) || connectionPoint.type=='ECONN_SERVER' ">
+                Connectivity
+            </a>
+        </c-nav-item>
+        <c-nav-item>
+
+
+            <a [disabled]="isSensors" cNavLink (click)="toSensors()" *ngIf="connectionPoint.type=='FACILITY'">
+                Devices
+            </a>
+        </c-nav-item>
+    </c-nav>
+
+
+</c-col>
+
+<app-cp-details [(addStage)]="addStage" [(connectionPoint)]="connectionPoint" [(selectedBusinessPartner)]="selectedBusinessPartner" [updateMode]="updateMode" *ngIf="(isDetails && connectionPoint.id!='' ) || (!updateMode && addStage == 0)"></app-cp-details>
+<app-cp-services [(addStage)]="addStage" [(connectionPoint)]="connectionPoint" [updateMode]="updateMode" *ngIf="(isServices && connectionPoint.id!='' )|| (!updateMode && addStage == 1)"></app-cp-services>
+<app-cp-connectivity [(addStage)]="addStage" [(connectionPoint)]="connectionPoint"  [updateMode]="updateMode" *ngIf="(isConnectivity && connectionPoint.id!='' ) || (!updateMode && addStage == 2)"></app-cp-connectivity>
+<app-cp-sensors *ngIf="isSensors"></app-cp-sensors>

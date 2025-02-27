@@ -1,0 +1,209 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+
+<ng-container *ngIf="connectionPointConnectivity">
+    <form cForm #updateCPForm="ngForm" class="needs-validation" (ngSubmit)="update(updateCPForm)" novalidate>
+        <p-panel header="Outbound Connectivity" [toggleable]="true" [style]="{'margin-bottom' : '20px' }"  *ngIf="connectionPoint.type=='ECONN_SERVER' && connectionPointConnectivity.outboundCredentials">
+            <div style="margin-left: 30px;">
+                <!-- <div class="row mb-3">
+                    <div class="col">
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="d-flex align-items-center">
+                                <p-radioButton name="connectivityType" value="manual" inputId="manual"
+                                    [(ngModel)]="connectivityType" [disabled]="!userIsAdmin"></p-radioButton>
+                                <label for="connectivityType" class="ms-2 ">manual</label>
+                            </div>
+    
+                            <div class="d-flex align-items-center">
+                                <p-radioButton name="connectivityType" value="automatic" inputId="automatic"
+                                    [(ngModel)]="connectivityType"  [disabled]="!userIsAdmin"></p-radioButton>
+                                <label for="connectivityType" class="ms-2 ">automatic</label>
+                            </div>
+    
+    
+                        </div>
+                    </div>
+                </div> -->
+                <div class="row mb-3">
+                    <div class="col">
+                        <label cLabel for="host">Host <span class="error-text">*</span></label>
+                        <input cFormControl id="host" placeholder="Host" type="text" name="host"
+                            [(ngModel)]="connectionPointConnectivity.host" #host="ngModel" required
+                            [ngClass]="{ 'is-invalid': host.invalid && (host.dirty || host.touched) }"  [disabled]="!userIsAdmin">
+                        <span *ngIf="host.invalid && (host.dirty || host.touched) " class="error-text">
+                            Host is required
+                        </span>
+                    </div>
+                    <div class="col">
+                        <label cLabel for="port">Port <span class="error-text">*</span></label>
+                        <input cFormControl id="port" placeholder="Port" type="text" name="port"
+                            [(ngModel)]="connectionPointConnectivity.port" #port="ngModel" required
+                            [ngClass]="{ 'is-invalid': port.invalid && (port.dirty || port.touched) }"  [disabled]="!userIsAdmin">
+                        <span *ngIf="port.invalid && (port.dirty || port.touched) " class="error-text">
+                            Port is required
+                        </span>
+                    </div>
+                    <div class="col">
+                        <label cLabel for="baseUrl">Base Url <span class="error-text">*</span></label>
+                        <input cFormControl id="baseUrl" placeholder="Base Url" type="text" name="baseUrl"
+                            [(ngModel)]="connectionPointConnectivity.baseUrl" #baseUrl="ngModel" required
+                            [ngClass]="{ 'is-invalid': baseUrl.invalid && (baseUrl.dirty || baseUrl.touched) }"  [disabled]="!userIsAdmin">
+                        <span *ngIf="baseUrl.invalid && (baseUrl.dirty || baseUrl.touched) " class="error-text">
+                            Base Url is required
+                        </span>
+                    </div>
+                </div>
+    
+                <div class="row mb-3">
+                    <div class="col">
+                        <label cLabel class="label-spacing">Full Url</label>
+                        <label class="fullUrl"
+                            cLabel>{{connectionPointConnectivity.host}}:{{connectionPointConnectivity.port}}{{connectionPointConnectivity.baseUrl}}</label>
+                    </div>
+                </div>
+            </div>
+        </p-panel>
+        <p-panel header="Outbound Credentials" [toggleable]="true" [style]="{'margin-bottom' : '20px' }" *ngIf="connectionPoint.type=='ECONN_SERVER' && connectionPointConnectivity.outboundCredentials">
+            <div style="margin-left: 30px;">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label cLabel for="authType">Authorization type <span class="error-text">*</span></label>
+                        <select cFormControl id="authType" cSelect name="authType"
+                            [(ngModel)]="connectionPointConnectivity.outboundCredentials.authType"
+                            #authType="ngModel" required
+                            [ngClass]="{ 'is-invalid': authType.invalid && (authType.dirty || authType.touched) }"  [disabled]="!userIsAdmin">
+                            <option value="BASIC_AUTH">BASIC_AUTH</option>
+                            <option value="API_KEY">API_KEY</option>
+                            <option value="OAUTH_AUTHCODE">OAUTH_AUTHCODE</option>
+                        </select>
+                        <span *ngIf="authType.invalid && (authType.dirty || authType.touched) " class="error-text">
+                            Authorization type is required
+                        </span>
+                    </div>
+                    <ng-container *ngIf="connectionPointConnectivity.outboundCredentials.authType == 'BASIC_AUTH'">
+                        <div class="col">
+                            <label cLabel for="userName">Username <span class="error-text">*</span></label>
+                            <input cFormControl id="userName" placeholder="Username" type="text" name="userName"
+                                [(ngModel)]="connectionPointConnectivity.outboundCredentials.userName"
+                                #userName="ngModel" required
+                                [ngClass]="{ 'is-invalid': userName.invalid && (userName.dirty || userName.touched) }"  [disabled]="!userIsAdmin">
+                            <span *ngIf="userName.invalid && (userName.dirty || userName.touched) " class="error-text">
+                                Username  is required
+                            </span>
+                        </div>
+                        <div class="col">
+                            <label cLabel for="password">Password <span class="error-text">*</span></label>
+                            <p-password cFormControl id="password" placeholder="Password"  name="password"
+                                [(ngModel)]="connectionPointConnectivity.outboundCredentials.passwordCredentials"
+                                #password="ngModel" required inputStyleClass="form-control "  [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [toggleMask]="true"
+                                [ngClass]="{ 'is-invalid': password.invalid && (password.dirty || password.touched) }"  [disabled]="!userIsAdmin"></p-password>
+                            <span *ngIf="password.invalid && (password.dirty || password.touched) " class="error-text">
+                                Password is required
+                            </span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="connectionPointConnectivity.outboundCredentials.authType == 'API_KEY'">
+                        <div class="col">
+                            <label cLabel for="apiKey">API Key <span class="error-text">*</span></label>
+                            <input cFormControl id="apiKey" placeholder="API Key" type="text" name="apiKey"
+                                [(ngModel)]="connectionPointConnectivity.outboundCredentials.apiKey"
+                                #apiKey="ngModel" required
+                                [ngClass]="{ 'is-invalid': apiKey.invalid && (apiKey.dirty || apiKey.touched) }"  [disabled]="!userIsAdmin">
+                            <span *ngIf="apiKey.invalid && (apiKey.dirty || apiKey.touched) " class="error-text">
+                                API key  is required
+                            </span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="connectionPointConnectivity.outboundCredentials.authType == 'OAUTH_AUTHCODE'">
+                        <div class="col">
+                            <label cLabel for="tokenEndpoint">OAuth token endpoint <span class="error-text">*</span></label>
+                            <input cFormControl id="tokenEndpoint" placeholder="OAuth token endpoint" type="text" name="tokenEndpoint"
+                                [(ngModel)]="connectionPointConnectivity.outboundCredentials.oauthCredentials.tokenEndpoint"
+                                #tokenEndpoint="ngModel" required
+                                [ngClass]="{ 'is-invalid': tokenEndpoint.invalid && (tokenEndpoint.dirty || tokenEndpoint.touched) }"  [disabled]="!userIsAdmin">
+                            <span *ngIf="tokenEndpoint.invalid && (tokenEndpoint.dirty || tokenEndpoint.touched) " class="error-text">
+                                OAuth token endpoint  is required
+                            </span>
+                        </div>
+                        <div class="col">
+                            <label cLabel for="clientId">OAuth client ID <span class="error-text">*</span></label>
+                            <input cFormControl id="clientId" placeholder="OAuth client ID" type="text" name="clientId"
+                                [(ngModel)]="connectionPointConnectivity.outboundCredentials.oauthCredentials.clientId"
+                                #clientId="ngModel" required
+                                [ngClass]="{ 'is-invalid': clientId.invalid && (clientId.dirty || clientId.touched) }"  [disabled]="!userIsAdmin">
+                            <span *ngIf="clientId.invalid && (clientId.dirty || clientId.touched) " class="error-text">
+                                OAuth client ID is required
+                            </span>
+                        </div>
+                        <div class="col">
+                            <label cLabel for="clientCredentials">OAuth client credentials <span class="error-text">*</span></label>
+                            <p-password cFormControl id="clientCredentials" placeholder="OAuth client credentials" name="clientCredentials"
+                                [(ngModel)]="connectionPointConnectivity.outboundCredentials.oauthCredentials.clientCredentials"
+                                #clientCredentials="ngModel" required
+                                [ngClass]="{ 'is-invalid': clientCredentials.invalid && (clientCredentials.dirty || clientCredentials.touched) }" inputStyleClass="form-control "  [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [toggleMask]="true"  [disabled]="!userIsAdmin"></p-password>
+                            <span *ngIf="clientCredentials.invalid && (clientCredentials.dirty || clientCredentials.touched) " class="error-text">
+                                OAuth client credentials is required
+                            </span>
+                        </div>
+                    </ng-container>
+                </div>
+    
+    
+            </div>
+        </p-panel>
+        <p-panel header="Inbound Credentials" [toggleable]="true" [style]="{'margin-bottom' : '20px' }" *ngIf="connectionPoint.type=='FACILITY' && connectionPointConnectivity.inboundCredentials">
+            <div style="margin-left: 30px;">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label cLabel for="rate">Rate profile name</label>
+                        <input cFormControl id="rate" placeholder="Rate profile name" type="text" name="rate"
+                            [(ngModel)]="connectionPointConnectivity.inboundCredentials.inbRateProfile" [disabled]="!userIsAdmin">
+                    </div>
+                    <div class="col">           
+                        <label cLabel for="inbUsername">Username <span class="error-text">*</span></label>
+                        <input cFormControl id="inbUsername" placeholder="Username" type="text" name="inbUsername"
+                            [(ngModel)]="connectionPointConnectivity.inboundCredentials.inbUserName"
+                            #inbUsername="ngModel" required
+                            [ngClass]="{ 'is-invalid': inbUsername.invalid && (inbUsername.dirty || inbUsername.touched) }" [disabled]="!userIsAdmin">
+                        <span *ngIf="inbUsername.invalid && (inbUsername.dirty || inbUsername.touched) " class="error-text">
+                            Username is required
+                        </span>
+                    </div>
+                    <div class="col">
+                        <label cLabel for="inbPassword">Set/update Keycloak password</label>
+                        <p-password cFormControl id="inbPassword" placeholder="Set/update Keycloak password" 
+                            value="Working On it" inputStyleClass="form-control "  [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}" [toggleMask]="true" [disabled]="!userIsAdmin"></p-password>
+                    </div>
+                </div>
+            </div>
+        </p-panel>
+        <div class="container" style="margin-top: 20px; margin-bottom: 20px;">
+            <div class="row justify-content-center">
+                <div class="col-auto" *ngIf="userIsAdmin && !updateMode">
+    
+                    <button class="btn cancel" (click)="previous()">
+                        <svg cIcon [name]="'cilArrowThickLeft'" [title]="'cilArrowThickLeft'" size="xl"></svg>
+
+                        Previous
+                    </button>
+                </div>
+                <div class="col-auto" *ngIf="userIsAdmin">
+    
+                    <button class="btn save" type="submit" [disabled]="updateCPForm.invalid">
+                        <svg cIcon [name]="'cilHistory'" [title]="'cilHistory'" size="xl"></svg>
+                        Save
+                    </button>
+                </div>
+              
+                <div class="col-auto">
+                    <button class="btn cancel" routerLink="/connectionpoints">
+                        <svg cIcon [name]="'cilX'" [title]="'cilX'" size="xl"></svg>
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</ng-container>

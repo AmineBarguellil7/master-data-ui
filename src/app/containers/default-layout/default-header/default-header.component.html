@@ -1,0 +1,48 @@
+<ng-container>
+  <button style="color: whitesmoke;"
+      toggle="visible"
+      cHeaderToggler
+      [cSidebarToggle]="sidebarId"
+      class="ps-1"
+      (click)="toggleSidebar()"
+    >
+      <svg cIcon
+        name="cilMenu"
+        size="lg"
+      ></svg>
+    </button>
+
+    <c-header-nav class="d-none d-lg-flex me-auto">
+      <c-breadcrumb-router class="ms-2"></c-breadcrumb-router>
+    </c-header-nav>
+
+  <c-header-nav class="ms-3">
+    <ng-container *ngTemplateOutlet="userDropdown"></ng-container>
+  </c-header-nav>
+</ng-container>
+
+
+<ng-template #userDropdown>
+  <c-dropdown alignment="end" variant="nav-item">
+    <button
+      cButton
+      color=""
+      [caret]="false"
+      cDropdownToggle
+      class="py-0"
+      style="color: whitesmoke;"
+    >
+       {{userName}}
+    </button>
+    <ul cDropdownMenu class="pt-0 pr-5 w-auto">
+      <li>
+        <h6 cDropdownHeader class="bg-light fw-semibold py-2">Account</h6>
+      </li>
+      <li>
+        <a (click)="logout()" cDropdownItem>
+          Logout
+        </a>
+      </li>
+    </ul>
+  </c-dropdown>
+</ng-template>

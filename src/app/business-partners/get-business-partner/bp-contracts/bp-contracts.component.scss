@@ -1,0 +1,178 @@
+.TableStyle {
+    overflow-x: auto; 
+    white-space: nowrap; 
+  }
+  
+::ng-deep .p-autocomplete-loader {
+  display: none;
+}
+
+::ng-deep .p-autocomplete-item {
+  padding: 5px;
+  font-size: small;
+}
+
+/* Make buttons smaller */
+::ng-deep .p-button {
+  font-size: small;
+  padding: 5px;
+}
+
+/* adjust the icon size within buttons */
+::ng-deep .p-button .pi {
+  font-size: small;
+}
+
+
+::ng-deep .p-multiselect-label {
+  font-size: small;
+  padding: 5px;
+}
+
+
+::ng-deep .p-multiselect-item{
+  padding: 5px;
+  font-size: small;
+}
+.selectable-cell:hover {
+  cursor: pointer;
+}
+
+
+
+@media (min-width: 1092px) {
+  
+  #dropdownGroup {
+    display: none;
+  }
+
+}
+
+
+
+@media (max-width: 1091px) {
+  .p-button-outlined , p-button {
+    display: none;
+  }
+  #dropdownGroup {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -32px;
+  }
+
+  ::ng-deep .p-menuitem-link {
+    text-decoration: none;
+  }
+
+  #Tenant   ::ng-deep .p-autocomplete-input {
+    margin-right: 100px;
+  }
+
+  ::ng-deep  .p-tieredmenu {
+    width:128.98px !important;
+  }
+
+
+}
+
+
+
+
+
+@media (max-width: 1019px) {
+
+
+  #Tenant ::ng-deep .p-autocomplete-input {
+    position: relative;
+    right:25px;
+  }
+
+}
+
+
+@media (max-width: 995px) {
+
+  #Tenant ::ng-deep .p-autocomplete-input {
+    margin-right: 270px;
+    max-width: 130px;
+  }
+
+
+}
+
+
+@media (max-width: 991px) { 
+  #Tenant   ::ng-deep .p-autocomplete-input {
+    margin-top: 50px;
+    margin-left: 25px;
+    min-width: 200px;
+  }
+
+
+
+  #dropdownGroup {
+    position: relative;
+    bottom: 40px;
+    justify-content: start;
+    // display: flex;
+    // justify-content: flex-start;
+  }  
+
+  #Tenant .pi {
+    display: none;
+  }
+
+  ::ng-deep  .p-tieredmenu {
+    width:200px !important;
+  }
+
+  ::ng-deep .p-splitbutton  {
+    width: 200px !important;
+    // margin-bottom: 50px !important;
+  }
+
+
+}
+
+
+@media (max-width: 794px) {
+
+  #Tenant   ::ng-deep .p-autocomplete-input {
+    margin-top: 50px;
+  }
+
+  #Tenant .pi {
+    display: none;
+  }
+
+  #dropdownGroup {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+}
+
+
+@media (max-width: 790px) and (min-width: 768px) {
+  
+
+  #Tenant   ::ng-deep .p-autocomplete-input {
+    margin-right: 0px !important;
+  }
+
+}
+
+
+
+
+@media (max-width: 535px) {
+ 
+  #Tenant   ::ng-deep .p-autocomplete-input {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+}
+
+
+ 

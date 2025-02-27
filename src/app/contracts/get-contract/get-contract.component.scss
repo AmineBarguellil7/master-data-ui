@@ -1,0 +1,57 @@
+.details {
+    margin-left: 50px;
+}
+
+.label-spacing {
+    margin-right: 30px;
+}
+
+.error-text {
+    color: #e55353;
+}
+
+
+
+.autoComplete-countries {
+    display: block;
+}
+
+
+button svg {
+    vertical-align: middle; 
+    margin-bottom: 5px;
+}
+.delete{
+    background-color: #bf6161;
+}
+
+.save{
+    background-color: #e6b931;
+}
+
+.cancel{
+    background-color: #d6d6d6;
+}
+
+::ng-deep .p-picklist-buttons .p-button {
+    transition: opacity 0.2s, outline-color 0.2s, background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    color: #475569;
+    background: #f1f5f9;
+    border: 1px solid #f1f5f9;
+}
+.error-text {
+    color: #e55353;
+}
+select:disabled , input:disabled{
+
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    color: #4b5563;
+    opacity: 0.6;
+
+}
+
+
+form {
+    overflow-x: hidden;
+}

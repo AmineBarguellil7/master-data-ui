@@ -1,0 +1,122 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+<form cForm (ngSubmit)="UpdateSensor(updateForm)" #updateForm="ngForm">
+    <p-panel [toggleable]="true" header="Connection point of device" [style]="{'margin-bottom' : '20px' }">
+        <div class="row mb-3">
+            <p>Choose business partner and connection point for the device</p>
+            <div class="col">
+                <label cLabel for="OwningbusinessPartner">Owning business partner <span
+                        class="error-text">*</span></label>
+                <p-autoComplete [(ngModel)]="selectedBusinessPartner" [suggestions]="businessPartnerSuggestions"
+                    [inputStyle]="{ width: '100%' , 'font-size': 'large' , 'padding' : '5px' }"
+                    (completeMethod)="filterBusinessPartners($event)" placeholder="Business Partner" field="name"
+                    (onSelect)="onSelectBusinessPartner()" 
+                    [forceSelection]="true" [required]="true" #bpName="ngModel" [style]="{'width': '100%' }"
+                    name="bpName" [disabled]="updateMode || cpIdIsSelected"></p-autoComplete>
+                    <span class="help-block error-text" *ngIf="!bpName.valid && bpName.touched">Business Partner is
+                        required</span>
+            </div>
+            <div class="col">
+                <label cLabel for="connectionPoint">Connection point <span class="error-text">*</span></label>
+                <p-autoComplete [(ngModel)]="selectedConnectionPoint" [suggestions]="connectionPointsSuggestions"
+                    [inputStyle]="{ width: '100%' , 'font-size': 'large' , 'padding' : '5px' }"
+                    (completeMethod)="filterConnectionPoints($event)" placeholder="ConnectionPoint" field="name"
+                    (onSelect)="onSelectConnectionPoint()" (keydown.enter)="onSelectConnectionPoint()"
+                    [forceSelection]="true" [required]="true" #cpName="ngModel" name="cpName"
+                    [disabled]="updateMode || cpIdIsSelected" [style]="{'width': '100%' }"></p-autoComplete>
+                    <span class="help-block error-text" *ngIf="!cpName.valid && cpName.touched">Connection Point is
+                        required</span>
+            </div>
+
+            <div class="col">
+                <label cLabel for="locationId">Location ID <span class="error-text">*</span></label>
+                <input cFormControl id="locationId" placeholder="Location ID" type="text"
+                    [(ngModel)]="sensor.locationId" name="locationId" #locationId="ngModel" [disabled]="true" required>
+            </div>
+        </div>
+    </p-panel>
+    <p-panel [toggleable]="true" header="Device data">
+        <div class="row mb-3">
+            <div class="col">
+                <label cLabel for="deviceName">Device name <span class="error-text">*</span></label>
+                <input cFormControl id="deviceName" placeholder="Device name" type="text"
+                    [(ngModel)]="sensor.deviceName" name="deviceName" #deviceName="ngModel" required
+                    [disabled]="!userIsAdmin">
+                <span class="help-block error-text" *ngIf="!deviceName.valid && deviceName.touched">deviceName is
+                    required</span>
+            </div>
+            <div class="col">
+                <label cLabel for="serialNumber">Serial number <span class="error-text">*</span></label>
+                <input cFormControl id="serialNumber" placeholder="Serial number" type="text" [disabled]="!userIsAdmin"
+                    [(ngModel)]="sensor.serialNumber" (blur)="onSerialNumberChange()" name="serialNumber"
+                    #serialNumber="ngModel" required>
+                <span class="help-block error-text" *ngIf="!serialNumber.valid && serialNumber.touched">serialNumber is
+                    required</span>
+                <span class="help-block error-text" *ngIf="SerialNumberError">{{ SerialNumberError }}</span>
+            </div>
+
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                <label cLabel for="laneNumber">Lane number <span class="error-text">*</span></label>
+                <input cFormControl id="laneNumber" placeholder="Lane number" type="number"
+                    [(ngModel)]="sensor.laneNumber" name="laneNumber" #laneNumber="ngModel" required
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" [disabled]="!userIsAdmin">
+                <span class="help-block error-text" *ngIf="!laneNumber.valid && laneNumber.touched">laneNumber is
+                    required</span>
+                <!-- <span class="help-block error-text" *ngIf="LaneNumberError">{{ LaneNumberError }}</span> -->
+            </div>
+
+            <div class="col">
+                <label cLabel for="direction">Direction <span class="error-text">*</span></label>
+                <select cSelect id="direction" name="direction" [(ngModel)]="sensor.direction"
+                    [disabled]="!userIsAdmin">
+                    <option value="IN">IN</option>
+                    <option value="OUT">OUT</option>
+                    <option value="ACCESS">ACCESS</option>
+                </select>
+
+            </div>
+        </div>
+        <div class="row mb-3" *ngIf="withSensorApiKey">
+         <label cLabel for="apiKey">API Key <span class="error-text">*</span></label>
+
+        <div class="col-8">
+            <input cFormControl id="apiKey" placeholder="API Key" type="text" [disabled]="!userIsAdmin"
+                [(ngModel)]="sensor.apiKey"  name="apiKey"
+                #apiKey="ngModel" required>
+            <span class="help-block error-text" *ngIf="!apiKey.valid && apiKey.touched">API key is
+                required</span>
+        </div>
+        <div class="col-4">
+            <button class="btn cancel" (click)="generateApiKey()" type="button">Generate</button>
+        </div>
+    </div>
+    </p-panel>
+    <div class="container" style="margin-top: 20px; margin-bottom: 20px;">
+        <div class="row justify-content-center">
+            <div class="col-auto" *ngIf="userIsAdmin">
+
+                <button class="btn save" type="submit" [disabled]="updateForm.invalid">
+                    <svg cIcon [name]="'cilHistory'" [title]="'cilHistory'" size="xl"></svg>
+                    Save
+                </button>
+            </div>
+            <div class="col-auto"  *ngIf="userIsAdmin && updateMode">
+
+                <button class="btn delete" (click)="deleteSensor($event)" type="button">
+                    <svg cIcon [name]="'cilTrash'" [title]="'cilTrash'" size="xl"></svg>
+                    Delete
+                </button>
+            </div>
+            <div class="col-auto">
+                <button class="btn cancel" routerLink="/contracts">
+                    <svg cIcon [name]="'cilX'" [title]="'cilX'" size="xl"></svg>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

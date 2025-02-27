@@ -1,0 +1,291 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+
+
+<form cForm #addBPForm="ngForm" class="needs-validation" (ngSubmit)="update(addBPForm)" novalidate>
+    <p-panel header="Business Partner" [toggleable]="true" [style]="{'margin-bottom' : '20px' }">
+
+        <div style="margin-left: 30px;">
+            <div class="row mb-3" *ngIf="updateMode">
+                <div class="col row mb3">
+                    <label class="col-auto " cLabel style="margin-top: 0.5rem;">Identifier</label>
+                    <label class="col-auto" cLabel style="margin-top: 0.5rem;">{{businessPartner.id}}</label>
+                    <p-button class="col-auto"
+                        [style]="{'border-radius': '2rem' ,'font-size':'small' , 'height':'40px'}" severity="warning"
+                        [outlined]="true" [raised]="true" (click)="copyId()">Copy</p-button>
+
+                </div>
+                <div class="col">
+                    <label cLabel class="label-spacing" style="margin-top: 0.5rem;">Partner Number</label>
+                    <label cLabel style="margin-top: 0.5rem;">{{businessPartner.partnerNumber}}</label>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="partnerName">Partner Name <span class="error-text">*</span></label>
+                    <input cFormControl [disabled]="!userIsAdmin" rol class="form-control" id="PartnerName"
+                        placeholder="Partner Name" type="text" [(ngModel)]="businessPartner.name" name="name"
+                        #partner="ngModel" required
+                        [ngClass]="{ 'is-invalid': partner.invalid && (partner.dirty || partner.touched) }"
+                        [disabled]="!userIsAdmin">
+                    <span *ngIf="partner.invalid && (partner.dirty || partner.touched) " class="error-text">
+                        Partner Name is required
+                    </span>
+                </div>
+                <div class="col">
+                    <label cLabel for="providerId">Provider ID <span class="error-text">*</span></label>
+
+                    <div class="row mb-3">
+                        <input class="col" cFormControl id="providerId" placeholder="Provider ID" type="text"
+                            [(ngModel)]="businessPartner.providerId" name="providerId" #providerId="ngModel" required
+                            [ngClass]="{ 'is-invalid': providerId.invalid && (providerId.dirty || providerId.touched) }"
+                            [disabled]="!userIsAdmin">
+                        <ng-container *ngIf=" (providerId.dirty || providerId.touched) ">
+                            <p-button class="col-auto" [style]="{'border-radius': '2rem'}" severity="warning"
+                                [outlined]="true" [raised]="true"
+                                (click)="selectProviderId(true)">{{providerIdUnderHundred}}</p-button>
+                            <p-button class="col-auto" [style]="{'border-radius': '2rem'}" severity="warning"
+                                [outlined]="true" [raised]="true"
+                                (click)="selectProviderId(false)">{{providerIdAboveHundred}}</p-button>
+                        </ng-container>
+
+                    </div>
+                    <span *ngIf="providerId.invalid && (providerId.dirty || providerId.touched) " class="error-text">
+                        Provider ID is required
+                    </span>
+
+
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="tenantName">Tenant Name</label>
+                    <input cFormControl id="tenantName" placeholder="Tenant Name" type="text"
+                        [(ngModel)]="businessPartner.tenantId" name="tenantId" [disabled]="!userIsAdmin">
+                </div>
+                <div class="col">
+                    <label cLabel for="country">Country <span class="error-text">*</span></label>
+
+
+                    <p-dropdown [options]="countries" [(ngModel)]="businessPartner.countryCode" [showClear]="true"
+                        placeholder="Select a Country" panelStyleClass="form-control " class=" autoComplete-countries"
+                        [style]="{'width':'100%'}" [panelStyle]="{'width':'100%'}" name="countryCode" [required]="true"
+                        #country="ngModel" [filter]="true" filterBy="name" [virtualScroll]="true" [disabled]="!userIsAdmin" optionValue="cca2">
+                        <ng-template pTemplate="selectedItem" >
+                            <div class="flex align-items-center gap-2" *ngIf="businessPartner.countryCode">
+                                <img src="assets/svg-country-flags/svg/{{ businessPartner.countryCode.toLowerCase()}}.svg"
+                                    style="width: 18px" />
+                                <span style="margin-left: 20px;">{{ businessPartner.countryCode }}</span>
+                            </div>
+                        </ng-template>
+                        <ng-template let-country pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <img src="assets/svg-country-flags/svg/{{country.cca2.toLowerCase()}}.svg"
+                                    style="width: 18px" />
+                                <span style="margin-left: 20px;">{{ country.name }}</span>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <span *ngIf="!country.valid &&  (country.touched || country.dirty)" class="error-text">
+                        Country is required
+                    </span>
+
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="city">City <span class="error-text">*</span></label>
+                    <input cFormControl id="city" placeholder="City" type="text" [(ngModel)]="businessPartner.city"
+                        name="city" #city="ngModel" required
+                        [ngClass]="{ 'is-invalid': city.invalid && (city.dirty || city.touched) }"
+                        [disabled]="!userIsAdmin">
+                    <span *ngIf="city.invalid && (city.dirty || city.touched) " class="error-text">
+                        City is required
+                    </span>
+                </div>
+                <div class="col">
+                    <label cLabel for="currency">Currency <span class="error-text">*</span></label>
+
+                    <p-dropdown [options]="currencies" [(ngModel)]="businessPartner.currency" [showClear]="true"
+                        placeholder="Select a Currency" panelStyleClass="form-control " class=" autoComplete-countries"
+                        [style]="{'width':'100%'}" [panelStyle]="{'width':'100%'}" name="currency" [required]="true"
+                        #currency="ngModel" [filter]="true" [virtualScroll]="true" [disabled]="!userIsAdmin" >
+                        <ng-template pTemplate="selectedItem">
+                            <div class="flex align-items-center gap-2" *ngIf="businessPartner.currency">
+                                <span  class="currency-flag currency-flag-{{businessPartner.currency.toLowerCase()}}"
+                                style="height: 20px; width: 30px;"></span>
+                                <span style="margin-left: 20px;">{{ businessPartner.currency }}</span>
+                            </div>
+                        </ng-template>
+                        <ng-template let-currency pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <span  class="currency-flag currency-flag-{{currency.toLowerCase()}}"
+                                    style="height: 20px; width: 30px;"></span>
+                                <span style="margin-left: 20px;">{{ currency }}</span>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <span *ngIf="!currency.valid &&  (currency.touched || currency.dirty)" class="error-text">
+                        Currency is required
+                    </span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="type">Type <span class="error-text">*</span></label>
+                    <select cFormControl id="type" type="text" cSelect [(ngModel)]="businessPartner.type" name="type"
+                        #type="ngModel" required
+                        [ngClass]="{ 'is-invalid': type.invalid && (type.dirty || type.touched) }"
+                        [disabled]="!userIsAdmin">
+                        <option value="DEFAULT">DEFAULT</option>
+                        <option value="B2C">B2C</option>
+                    </select>
+                    <span *ngIf="type.invalid && (type.dirty || type.touched) " class="error-text">
+                        Type is required
+                    </span>
+                </div>
+            </div>
+            <!-- <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="switchOffExit" class="label-spacing">Switch Off Exit Request</label>
+                    <input cFormCheckInput type="checkbox" name="switchOffExit" id="switchOffExit"
+                        [(ngModel)]="businessPartner.switchOffExit" [checked]="businessPartner.switchOffExit"
+                        [disabled]="!userIsAdmin" />
+                </div>
+            </div> -->
+        </div>
+    </p-panel>
+
+    <p-panel header="Contact Person" [toggleable]="true">
+        <div style="margin-left: 30px;">
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="salutation">Salutation <span class="error-text">*</span></label>
+
+                    <select cFormControl id="salutation" cSelect [(ngModel)]="businessPartner.contactPerson.salutation"
+                        name="salutation" #salutation="ngModel" required
+                        [ngClass]="{ 'is-invalid': salutation.invalid && (salutation.dirty || salutation.touched) }"
+                        [disabled]="!userIsAdmin">
+                        <option value="MR">MR</option>
+                        <option value="MRS">MRS</option>
+                    </select>
+                    <span *ngIf="salutation.invalid && (salutation.dirty || salutation.touched) " class="error-text">
+                        Salutation is required
+                    </span>
+                </div>
+                <div class="col">
+                    <label cLabel for="title">Title</label>
+                    <input cFormControl id="title" placeholder="Title" type="text"
+                        [(ngModel)]="businessPartner.contactPerson.personalTitle" name="title"
+                        [disabled]="!userIsAdmin">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="firstName">Firstname <span class="error-text">*</span></label>
+                    <input cFormControl id="firstName" placeholder="Firstname" type="text"
+                        [(ngModel)]="businessPartner.contactPerson.firstName" name="firstName" #firstName="ngModel"
+                        required
+                        [ngClass]="{ 'is-invalid': firstName.invalid && (firstName.dirty || firstName.touched) }"
+                        [disabled]="!userIsAdmin">
+                    <span *ngIf="firstName.invalid && (firstName.dirty || firstName.touched) " class="error-text">
+                        Firstname is required
+                    </span>
+                </div>
+                <div class="col">
+                    <label cLabel for="surname">Surname <span class="error-text">*</span></label>
+                    <input cFormControl id="surName" placeholder="Surname" type="text"
+                        [(ngModel)]="businessPartner.contactPerson.surName" name="surName" #surName="ngModel" required
+                        [ngClass]="{ 'is-invalid': surName.invalid && (surName.dirty || surName.touched) }"
+                        [disabled]="!userIsAdmin">
+                    <span *ngIf="surName.invalid && (surName.dirty || surName.touched) " class="error-text">
+                        Surname is required
+                    </span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="street">Street / Houseno.</label>
+                    <input cFormControl id="street" placeholder="Street" type="text"
+                        [(ngModel)]="businessPartner.contactPerson.address.street" name="street"
+                        [disabled]="!userIsAdmin">
+                </div>
+
+
+
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel>Postcode</label>
+                    <input cFormControl id="zipCode" placeholder="Zip Code" type="text"
+                        [(ngModel)]="businessPartner.contactPerson.address.zipCode" name="zipCode"
+                        [disabled]="!userIsAdmin">
+                </div>
+                <div class="col">
+                    <label cLabel>City</label>
+                    <input cFormControl id="city" placeholder="City" type="text"
+                        [(ngModel)]="businessPartner.contactPerson.address.city" name="city" [disabled]="!userIsAdmin">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="email">Email <span class="error-text">*</span></label>
+                    <input cFormControl id="email" placeholder="Email" type="email"
+                        [(ngModel)]="businessPartner.contactPerson.email" name="email" required #email="ngModel" email
+                        [ngClass]="{ 'is-invalid': email.invalid && (email.dirty || email.touched) }"
+                        [disabled]="!userIsAdmin">
+                    <span *ngIf="email && email.errors && email.errors['required'] && (email.dirty || email.touched)"
+                        class="error-text">
+                        Email is required
+                    </span>
+                    <span *ngIf="email && email.errors && email.errors['email'] && (email.dirty || email.touched)"
+                        class="error-text">
+                        Invalid email format
+                    </span>
+                </div>
+                <div class="col">
+                    <label cLabel for="phone">Phone <span class="error-text">*</span></label>
+                    <input cFormControl id="phone" placeholder="Phone" type="tel"
+                        [(ngModel)]="businessPartner.contactPerson.phone" name="phone" pattern="[0-9+ -]*" required
+                        #phone="ngModel" [ngClass]="{ 'is-invalid': phone.invalid && (phone.dirty || phone.touched) }"
+                        [disabled]="!userIsAdmin">
+                    <div *ngIf="phone.invalid && (phone.dirty || phone.touched)" style="color: red;">
+                        <div *ngIf="phone && phone.errors && phone.errors['required']">
+                            Phone is required
+                        </div>
+                        <div *ngIf="phone && phone.errors && phone.errors['pattern']">
+                            Invalid phone format
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p-panel>
+    <div class="container" style="margin-top: 20px; margin-bottom: 20px;">
+        <div class="row justify-content-center">
+            <div class="col-auto" *ngIf="userIsAdmin">
+
+                <button class="btn  save" type="submit" [disabled]="addBPForm.invalid">
+                    <svg cIcon [name]="'cilHistory'" [title]="'cilHistory'" size="xl"></svg>
+                    Save
+                </button>
+            </div>
+            <div class="col-auto" *ngIf="userIsAdmin && updateMode">
+
+                <button class="btn delete" (click)="delete($event)" type="button">
+                    <svg cIcon [name]="'cilTrash'" [title]="'cilTrash'" size="xl"></svg>
+                    Delete
+                </button>
+            </div>
+            <div class="col-auto">
+                <button class="btn cancel" routerLink="/businesspartners">
+                    <svg cIcon [name]="'cilX'" [title]="'cilX'" size="xl"></svg>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+</form>

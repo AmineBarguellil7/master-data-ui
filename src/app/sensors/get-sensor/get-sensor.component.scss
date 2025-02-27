@@ -1,0 +1,103 @@
+.container {
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+
+h2 {
+    color: #555; 
+}
+
+
+p {
+    color: #777; 
+}
+
+
+.row {
+    display: flex;
+    flex-wrap: wrap; 
+}
+
+
+
+
+p-toast {
+    background-color: #333;
+    color: #fff; 
+}
+
+
+button svg {
+    vertical-align: middle; 
+    margin-bottom: 5px;
+}
+.delete{
+    background-color: #bf6161;
+}
+
+.save{
+    background-color: #e6b931;
+}
+
+.cancel{
+    background-color: #d6d6d6;
+}
+
+
+
+
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.form-row label {
+    min-width: 200px; 
+    margin-right: 1rem;
+    color: #555; 
+    font-size: small;
+}
+
+.form-row input[type="text"] {
+    flex: 1; 
+    max-width: 400px;
+}
+
+
+.form-row input[type="number"] {
+    flex: 1; 
+    max-width: 200px;
+}
+
+
+
+.form-row select {
+    flex: 1;
+    padding: 12px; 
+    margin-top: 8px; 
+    margin-bottom: 20px; 
+    border: 2px solid #ccc; 
+    border-radius: 8px; 
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    max-width: 400px; 
+    background-color: white; 
+    cursor: pointer;
+}
+
+
+.error-text {
+    color: #e55353;
+}
+select:disabled , input:disabled{
+
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    color: #4b5563;
+    opacity: 0.6;
+
+}

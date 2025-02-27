@@ -1,0 +1,188 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+<form cForm #updateCPForm="ngForm" class="needs-validation" (ngSubmit)="update(updateCPForm)" novalidate>
+  <p-panel header="Connection Point">
+    <div style="margin-left: 30px">
+      <div class="row mb-3">
+        <div class="col">
+          <label cLabel class="label-spacing">BusinessPartner <span class="error-text">*</span></label>
+          <label cLabel *ngIf="updateMode || bpIsSelected ">{{ selectedBusinessPartner.name }}</label>
+          <ng-container *ngIf="!updateMode && !bpIsSelected">
+            <p-autoComplete #businessPartnerName="ngModel" [(ngModel)]="selectedBusinessPartner"
+              [suggestions]="businessPartnerSuggestions" [inputStyle]="{
+                width: '100%',
+                'font-size': 'big',
+                padding: '5px'
+              }" (completeMethod)="filterBusinessPartners($event)" (onSelect)="onSelectBp()"
+              placeholder="Chooes Business Partner" name="businessPartnerName" [forceSelection]="true" field="name"
+              [required]="true" [style]="{ width: '100%' }">
+            </p-autoComplete>
+            <span *ngIf="
+                businessPartnerName.invalid &&
+                (businessPartnerName.dirty || businessPartnerName.touched)
+              " class="help-block error-text">
+              Business Partner is required
+            </span>
+          </ng-container>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col">
+          <label cLabel for="type">Connection Type <span class="error-text">*</span></label>
+          <select cFormControl id="type" cSelect name="type" [(ngModel)]="connectionPoint.type" #type="ngModel" required
+            [ngClass]="{
+              'is-invalid': type.invalid && (type.dirty || type.touched)
+            }" [disabled]="!userIsAdmin">
+            <option value="FACILITY">FACILITY</option>
+            <option value="SUNDB_PORTAL_SERVER">SUNDB_PORTAL_SERVER</option>
+            <option value="PARTNER_SERVER">PARTNER_SERVER</option>
+            <option value="PARKNOW_SERVER">PARKNOW_SERVER</option>
+            <option value="ECONN_SERVER">ECONN_SERVER</option>
+            <option value="TEST_AUTHSERVER">TEST_AUTHSERVER</option>
+          </select>
+          <span *ngIf="type.invalid && (type.dirty || type.touched)" class="error-text">
+            Connection type is required
+          </span>
+        </div>
+        <div class="col">
+          <label cLabel for="name">Name <span class="error-text">*</span></label>
+          <input cFormControl id="name" placeholder="Name" type="text" name="name" [(ngModel)]="connectionPoint.name"
+            #name="ngModel" required [ngClass]="{
+              'is-invalid': name.invalid && (name.dirty || name.touched)
+            }" [disabled]="!userIsAdmin" />
+          <span *ngIf="name.invalid && (name.dirty || name.touched)" class="error-text">
+            Name is required
+          </span>
+        </div>
+      </div>
+      <ng-container *ngIf="connectionPoint.type=='FACILITY'">
+        <label cLabel class="label-spacing">Location ID/POI <span class="error-text">*</span></label>
+          <label cLabel >  {{connectionPoint.locationId}}</label>
+        <div class="row mb-3">
+          
+          <div class="col" style="display: flex; flex-direction: row; padding-left: 0px; padding-right: 0px;">
+            <label style="margin-right: 5px;  margin-top: 10px;">SB</label>
+            <input cFormControl id="facilityId" placeholder="Facility-ID" type="text" [(ngModel)]="this.connectionPoint.facilityId"
+              name="facilityId" pattern="[0-9]*" required #facilityId="ngModel"
+              [ngClass]="{ 'is-invalid': facilityId.invalid && (facilityId.dirty || facilityId.touched) }"
+              [disabled]="!userIsAdmin" (blur)="onLocationIdChange()">
+            <div *ngIf="facilityId.invalid && (facilityId.dirty || facilityId.touched)" style="color: red;">
+              <div *ngIf="facilityId && facilityId.errors && facilityId.errors['required']">
+                Facility-ID is required
+              </div>
+              <div *ngIf="facilityId && facilityId.errors && facilityId.errors['pattern']">
+                Facility-ID must be a number
+              </div>
+            </div>
+          </div>
+
+          <div class="col" style="display: flex; flex-direction: row; padding-left: 0px; padding-right: 0px;">
+            <label style="margin:10px;">.</label>
+            <input cFormControl id="cellId" placeholder="Cell-ID" type="text" [(ngModel)]="this.connectionPoint.cellId" name="cellId"
+              pattern="[0-9]*" required #cellId="ngModel"
+              [ngClass]="{ 'is-invalid': cellId.invalid && (cellId.dirty || cellId.touched) }"
+              [disabled]="!userIsAdmin" (blur)="onLocationIdChange()">
+            <div *ngIf="cellId.invalid && (cellId.dirty || cellId.touched)" style="color: red;">
+              <div *ngIf="cellId && cellId.errors && cellId.errors['required']" >
+                Cell-ID is required
+              </div>
+              <div *ngIf="cellId && cellId.errors && cellId.errors['pattern']">
+                Cell-ID must be a number
+              </div>
+            </div>
+          </div>
+
+          <div class="col" style="display: flex; flex-direction: row; padding-left: 0px; padding-right: 0px;">
+            <label style="margin:10px;">.0</label>
+            <input cFormControl id="operatorId" placeholder="Operator-ID" type="text" [(ngModel)]="this.connectionPoint.operatorId"
+              name="operatorId" pattern="[0-9]*" required #operatorId="ngModel"
+              [ngClass]="{ 'is-invalid': operatorId.invalid && (operatorId.dirty || operatorId.touched) }"
+              [disabled]="!userIsAdmin" (blur)="onLocationIdChange()">
+            <div *ngIf="operatorId.invalid && (operatorId.dirty || operatorId.touched)" style="color: red;">
+              <div *ngIf="operatorId && operatorId.errors && operatorId.errors['required']">
+                Operator-ID is required
+              </div>
+              <div *ngIf="operatorId && operatorId.errors && operatorId.errors['pattern']">
+                Operator-ID must be a number
+              </div>
+            </div>
+          </div>
+          <label cLabel class="error-text" *ngIf="!isLocationIdUnique">Location ID must be unique</label>
+
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <label cLabel for="carparkType">CarparkType <span class="error-text">*</span></label>
+            <select cFormControl id="carparkType" cSelect name="carparkType" [(ngModel)]="connectionPoint.carparkType"
+              #carparkType="ngModel" required [ngClass]="{
+              'is-invalid':
+                carparkType.invalid &&
+                (carparkType.dirty || carparkType.touched)
+            }" [disabled]="!userIsAdmin">
+              <option value="MULTI_STOREY_CARPARK">MULTI_STOREY_CARPARK</option>
+              <option value="UNDERGROUND_CARPARK">UNDERGROUND_CARPARK</option>
+              <option value="PARKING_AREA">PARKING_AREA</option>
+            </select>
+            <span *ngIf="
+              carparkType.invalid && (carparkType.dirty || carparkType.touched)
+            " class="error-text">
+              Carpark Type is required
+            </span>
+          </div>
+        </div>
+
+        <!-- <div class="row mb-3">
+          <div class="col">
+            <label cLabel for="leaveLoop" class="label-spacing">With Leave Loop</label>
+            <input cFormCheckInput type="checkbox" name="leaveLoop" id="leaveLoop" name="withLeaveLoop"
+              [(ngModel)]="connectionPoint.withLeaveLoop" [disabled]="!userIsAdmin" />
+          </div>
+        </div> -->
+      </ng-container>
+      <div class="row mb-3">
+        <div class="col">
+          <label cLabel for="orderNumber">S&B Order Number</label>
+          <input cFormControl id="orderNumber" placeholder="S&B Order Number" type="text" name="orderNumber"
+            [(ngModel)]="connectionPoint.orderNumber" [disabled]="!userIsAdmin" />
+        </div>
+        <div class="col">
+          <label cLabel for="activatedAt" class="label-spacing">Activated At</label>
+          <input cFormControl type="date" name="activatedAt" [(ngModel)]="connectionPoint.activatedAt"
+            [disabled]="!userIsAdmin" />
+        </div>
+      </div>
+    </div>
+  </p-panel>
+  <div class="container" style="margin-top: 20px; margin-bottom: 20px">
+    <div class="row justify-content-center">
+      <div class="col-auto" *ngIf="userIsAdmin">
+        <button class="btn save" type="submit" [disabled]="updateCPForm.invalid">
+
+          <ng-container *ngIf="updateMode">
+            <svg cIcon [name]="'cilHistory'" [title]="'cilHistory'" size="xl"></svg>
+             Save</ng-container>
+          <ng-container *ngIf="!updateMode">
+            <svg cIcon [name]="'cilArrowThickFromLeft'" [title]="'cilArrowThickFromLeft'" size="xl"></svg>
+            Next
+          </ng-container>
+
+
+        </button>
+      </div>
+      <div class="col-auto" *ngIf="userIsAdmin && updateMode">
+        <button class="btn delete" (click)="delete($event)" type="button">
+          <svg cIcon [name]="'cilTrash'" [title]="'cilTrash'" size="xl"></svg>
+          Delete
+        </button>
+      </div>
+      <div class="col-auto">
+        <button class="btn cancel" routerLink="/connectionpoints">
+          <svg cIcon [name]="'cilX'" [title]="'cilX'" size="xl"></svg>
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

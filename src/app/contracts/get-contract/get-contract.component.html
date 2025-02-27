@@ -1,0 +1,235 @@
+<p-toast></p-toast>
+<ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+
+<p-confirmDialog></p-confirmDialog>
+<form cForm (ngSubmit)="Update(updateForm)" #updateForm="ngForm">
+    <p-panel header="Contract details">
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="service" style="margin-right: 10px;">Service</label>
+                    <select cSelect id="service" name="service" [(ngModel)]="contract.serviceName" [disabled]="!userIsAdmin" (ngModelChange)="onSelectService()">
+                        <ng-container *ngFor="let service of services">
+                            <option [ngValue]="service.name" >{{service.name}}</option>
+                        </ng-container>
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="supplier" style="margin-right: 15px;">Supplier <span class="error-text">*</span></label>
+                    <p-autoComplete [(ngModel)]="contract.supplierName" [suggestions]="supplierSuggestions"field="name"
+                        [inputStyle]="{ width: '100%', 'font-size': 'big', 'padding': '5px' }"
+                        (completeMethod)="filterSuppliers($event)" (onSelect)="onSupplierSelect($event)"
+                        (keydown.enter)="onSupplierSelect($event)" placeholder="Search By Supplier" name="supplierName"
+                        [forceSelection]="true" [required]="true" #supplierName="ngModel"
+                        [style]="{'width': '100%' }" [disabled]="!userIsAdmin">
+                    </p-autoComplete>
+                    <span *ngIf="!supplierName.valid &&  supplierName.touched" class="help-block error-text" >
+                        supplierName is required
+                    </span>
+                </div>
+                <div class="col">
+                    <label cLabel for="consumer" style="margin-right: 15px;">Consumer <span class="error-text">*</span></label>
+                    <p-autoComplete [(ngModel)]="contract.consumerName" [suggestions]="consumerSuggestions" field="name"
+                        [inputStyle]="{ width: '100%', 'font-size': 'big', 'padding': '5px' }"
+                        (completeMethod)="filterConsumers($event)" (onSelect)="onConsumerSelect($event)"
+                        (keydown.enter)="onConsumerSelect($event)" placeholder="Search By Consumer" name="consumerName"
+                        #consumerName="ngModel" [forceSelection]="true" [required]="true"
+                        [style]="{'width': '100%' }" [disabled]="!userIsAdmin">
+                    </p-autoComplete>
+                    <span *ngIf="!consumerName.valid &&  consumerName.touched" class="help-block error-text" >
+                        Consumer Name is required
+                    </span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label cLabel>Supplier License <span class="error-text">*</span></label>
+                <div class="d-flex align-items-center">
+                    <div class="col-6">
+                        <select cSelect id="supplierLicense" name="supplierLicense"
+                            [(ngModel)]="contract.supplierLicense.licenseType" 
+                            style="margin-right: 5px;" [disabled]="!userIsAdmin">
+                                <option value="PER_TRANSACTION">PER_TRANSACTION</option>
+                                <option value="PER_MONTH">PER_MONTH</option>
+                                <option value="PER_MONTH_AND_CARPARK">PER_MONTH_AND_CARPARK</option>
+                        </select>
+                    </div>
+                    <div class="col-4" style="margin-left: 5px;">
+                        <input cFormControl id="supplierPrice" placeholder="supplierPrice" type="number"
+                            [(ngModel)]="contract.supplierLicense.price" name="supplierPrice" style="margin-right: 5px;"
+                            #supplierLicensePrice="ngModel" required  [disabled]="!userIsAdmin">
+                    </div>
+                    <span *ngIf="!supplierLicensePrice.valid &&  supplierLicensePrice.touched" class="help-block error-text">
+                        Supplier License Price is required
+                    </span>
+                    <div class="col-3">
+
+                        <span style="margin-left: 5px;">{{contract.supplierLicense.currency}}</span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label cLabel>Consumer License <span class="error-text">*</span></label>
+                <div class="d-flex align-items-center">
+                    <div class="col-6">
+                        <select cSelect id="consumerLicense" name="consumerLicense"
+                            [(ngModel)]="contract.consumerLicense.licenseType" 
+                            style="margin-right: 5px;" [disabled]="!userIsAdmin">
+                            
+                            <option value="PER_TRANSACTION">PER_TRANSACTION</option>
+                            <option value="PER_MONTH">PER_MONTH</option>
+                            <option value="PER_MONTH_AND_CARPARK">PER_MONTH_AND_CARPARK</option>
+                        </select>
+                    </div>
+                    <div class="col-4" style="margin-left: 5px;">
+
+                        <input cFormControl id="consumerPrice" placeholder="consumerPrice" type="number"
+                            [(ngModel)]="contract.consumerLicense.price" name="consumerPrice" style="margin-right: 5px;"
+                            #consumerLicensePrice="ngModel" required [disabled]="!userIsAdmin">
+                        <span *ngIf="!consumerLicensePrice.valid &&  consumerLicensePrice.touched" class="help-block error-text">
+                            Consumer License Price is required
+                        </span>
+                    </div>
+                    <div class="col-3">
+
+                        <span style="margin-left: 5px;">{{contract.consumerLicense.currency}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="priorityLevel">Priority <span class="error-text">*</span></label>
+                   
+                        <select cSelect id="priorityLevel" name="priorityLevel"
+                            [(ngModel)]="contract.priorityLevel"  required #priorityLevel="ngModel"
+                            style="margin-right: 5px;" [disabled]="!userIsAdmin"> 
+                            
+                            <option value="P1">1</option>
+                            <option value="P2">2</option>
+                            <option value="P3">3</option> 
+                            <option value="P4">4</option>  
+                            <option value="P5">5</option>
+                            <option value="P6">6</option>
+                            <option value="P7">7</option>
+                            <option value="P8">8</option>
+                            <option value="P9">9</option>
+                        </select>
+                    <span *ngIf="!priorityLevel.valid &&  priorityLevel.touched" class="help-block error-text" >    
+                        Priority Level is required
+                    </span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="supplierConnectionPointSelection">Supplier connection points</label>
+                    <div>
+                        <label for="all" style="margin-right: 10px;">All</label>
+                        
+                            <p-radioButton name="supplierSelectionType" value="ALL" inputId="supplierSelectionTypeAll"
+                                [(ngModel)]="contract.supplierConnectionPointSelection" [disabled]="!userIsAdmin"></p-radioButton>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label for="selectedOnly" style="margin-right: 10px;">Selected only</label>
+                        <p-radioButton name="supplierSelectionType" value="SELECTED_ONLY" inputId="supplierSelectionTypeSelectedOnly"
+                                [(ngModel)]="contract.supplierConnectionPointSelection" (click)="onSupplierSelect(null)" [disabled]="!userIsAdmin" ></p-radioButton>
+                    </div>
+
+
+
+                    <p-pickList *ngIf="contract.supplierConnectionPointSelection=='SELECTED_ONLY'" [source]="supplierConnectionPointsSource " [target]="supplierConnectionPointsTarget" sourceHeader="Available" targetHeader="Selected"
+                        [dragdrop]="userIsAdmin" [responsive]="true" [sourceStyle]="{ height: '10rem' }" [targetStyle]="{ height: '10rem' }"
+                        filterBy="name" sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name"
+                        breakpoint="1400px" [showSourceControls]="false" [showTargetControls]="false" [disabled]="!userIsAdmin" >
+                        <ng-template let-cp pTemplate="item">
+                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                <div class="flex-1 flex flex-column gap-2">
+                                    <span class="font-bold">{{ cp.name }}</span>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-pickList>
+
+
+
+
+
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="consumerConnectionPointSelection">Consumer connection points</label>
+                    <div>
+                        <label for="consumerAll" style="margin-right: 10px;">All</label>
+                       
+                            <p-radioButton name="consumerSelectionType" value="ALL" inputId="consumerSelectionTypeAll"
+                                [(ngModel)]="contract.consumerConnectionPointSelection" [disabled]="!userIsAdmin"></p-radioButton>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label for="consumerSelectedOnly" style="margin-right: 10px;">Selected only</label>
+                        <p-radioButton name="consumerSelectionType" value="SELECTED_ONLY" inputId="consumerSelectionTypeSelectedOnly"
+                                [(ngModel)]="contract.consumerConnectionPointSelection" (click)="onConsumerSelect(null)" [disabled]="!userIsAdmin"></p-radioButton>
+                    </div>
+
+
+
+
+                    <p-pickList *ngIf="contract.consumerConnectionPointSelection=='SELECTED_ONLY'" [source]="consumerConnectionPointsSource " [target]="consumerConnectionPointsTarget" sourceHeader="Available" targetHeader="Selected"
+                        [dragdrop]="userIsAdmin" [responsive]="true" [sourceStyle]="{ height: '10rem' }" [targetStyle]="{ height: '10rem' }"
+                        filterBy="name" sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name"
+                        breakpoint="1400px" [showSourceControls]="false" [showTargetControls]="false" [disabled]="!userIsAdmin">
+                        <ng-template let-cp pTemplate="item">        
+                            <div class="flex flex-wrap p-2 align-items-center gap-3">
+                                <div class="flex-1 flex flex-column gap-2">
+                                    <span class="font-bold">{{ cp.name }}  </span>
+                                </div>
+                            </div>
+                        </ng-template>
+
+                    </p-pickList>
+
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label cLabel for="contractStart">contract Start <span class="error-text">*</span></label>
+                    <input cFormControl id="contractStart" placeholder="contractStart" type="date"
+                        [(ngModel)]="contract.contractStart" name="contractStart" required #contractStart="ngModel" [disabled]="!userIsAdmin" >
+                    <span class="help-block error-text" *ngIf="!contractStart.valid &&  contractStart.touched" >Contract Start is
+                        required</span>
+                </div>
+                <div class="col">
+                    <label cLabel for="contractEnd">contract End </label>
+                    <input cFormControl id="contractEnd" placeholder="contractEnd" type="date"
+                        [(ngModel)]="contract.contractEnd" name="contractEnd" #contractEnd="ngModel" [disabled]="!userIsAdmin">
+                </div>
+            </div>
+        </div>
+
+    </p-panel>
+    <div class="container" style="margin-top: 20px; margin-bottom: 20px;">
+        <div class="row justify-content-center">
+            <div class="col-auto" *ngIf="userIsAdmin">
+
+                <button class="btn save" type="submit" [disabled]="updateForm.invalid" >
+                    <svg cIcon [name]="'cilHistory'" [title]="'cilHistory'" size="xl"></svg>
+                    Save
+                </button>
+            </div>
+            <div class="col-auto"  *ngIf="userIsAdmin && updateMode">
+
+                <button class="btn delete" (click)="deleteContract($event)" type="button">
+                    <svg cIcon [name]="'cilTrash'" [title]="'cilTrash'" size="xl"></svg>
+                    Delete
+                </button>
+            </div>
+            <div class="col-auto">
+                <button class="btn cancel" routerLink="/contracts">
+                    <svg cIcon [name]="'cilX'" [title]="'cilX'" size="xl"></svg>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
